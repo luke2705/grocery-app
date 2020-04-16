@@ -1,0 +1,169 @@
+<!-- remove incart after generating list, change addto cart to added, translucentify for incart and add a quantity button, make addtocart and recipes a separate buttons -->
+
+{% extends 'base.html' %}
+{% load static %}
+{% block body_block %}
+<div class="container-fluid" >
+    <p></p>
+    <div class="row" style='height:80vh'>
+        <div class="col-md-9 col-12" >
+            <h1>Meals</h1>
+            <!-- content to add tab for meals and a la carte ingredients -->
+            <!--<ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Meals</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Items</a>
+                </li>
+              </ul> -->
+              <div class="tab-content" id="myTabContent" style="margin-top: 10px;">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h3>So many good meals!</h3>
+                    <button type="submit" class='btn btn-secondary d-block d-md-none' value="Generate List" onclick="document.getElementById('generatelist').click()">Generate List</button>
+                    <div class='row'>
+                        {% for meal in Meals%}
+                        <div id = "{{meal.name}}"  class="col-6 col-sm-4 col-lg-3 meal" style='margin-bottom: 50px;position:static'>
+                            <!-- stub for adding a flippable backside with recipe, https://www.w3schools.com/howto/howto_css_flip_card.asp-->
+                            <!-- <div class='flip-card'>
+                                <div class='flip-card-inner'> -->
+                                    <div class="selectable flip-card-front" style="text-align: center;">
+                                        <div  style="text-align: center;"><h4 class='text-truncate' style="padding: 2px;">{{meal.name}}</h4></div>
+                                        <img src="{{meal.image.url}}" style="height:150px;width:100%;">
+                                    </div>
+                                    <!-- continued stub for adding a flippable backside with recipe -->
+                                    <!-- <div class="flip-card-back selectable">
+                                        <h1>Recipe</h1>
+                                        <ul><li>chicken</li><li>rice</li></ul>    
+                                    </div> -->
+                                <!-- </div>
+                            </div> -->
+                            <div class="row">
+                                <div class='col-12' style="padding:5px;text-align: center;"><button id='button{{meal.name}}' class='add btn btn-danger' style="width:90px;text-align: center;" onclick="addMealToCart(this)">Add</button></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- this is a stub for the ingredients tab -->
+                <!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <h3>Wow, lots of ingredients!</h3>
+                    <ul>
+                    {% for ingredient in Ingredients %}
+                        <li>{{ingredient}}</li>
+                    {% endfor %}
+                    <script></script>
+                    </ul>
+                </div> -->
+              </div>
+        </div>
+        <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74)">
+            <h1>Shopping Cart</h1>
+            <form action='/order/' method="POST">
+                {% csrf_token %}
+                <input id='hiddencart' type="hidden" name='hidden_input'>
+                <button id='generatelist' type="submit" class='btn btn-secondary' value="Generate List" onclick="sortGroceries()">Generate List</button>
+                <div id="cartList" style="height:70vh;overflow-y: auto;" ></div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    // TODO - figure out how to cleanly parse python dictionary sent from django
+    var recipes = JSON.parse('{{recipes}}'.replace(/&#x27;/g,'"'));
+    var locations = JSON.parse('{{Locations}}'.replace(/&#x27;/g,'"'));
+    var alacarteItems=JSON.parse('{{Ingredients}}'.replace(/&#x27;/g,'"'));
+    var cartDict = {};
+    function addMealToCart(item){
+        if (item.textContent == 'Add'){item.textContent='Remove'}
+        else {item.textContent='Add'}
+        meal = $(item).parents('.meal')
+        meal.toggleClass('incart')
+        ingredientList = recipes[meal.attr('id')]["ingredients"]
+        // add or remove from cart
+        if (meal.hasClass('incart')){
+            for (ingredient in ingredientList){
+                if (!((ingredient) in cartDict)){
+                    cartDict[ingredient] = ingredientList[ingredient];
+                }
+                else{
+                    cartDict[ingredient] = cartDict[ingredient] + ingredientList[ingredient]; 
+                }
+            }
+        }
+        else{
+            for (ingredient in ingredientList){
+                // if (((ingredient) in cartDict)){
+                    cartDict[ingredient] = Math.max(cartDict[ingredient] - ingredientList[ingredient], 0); 
+                // }
+                if (cartDict[ingredient] == 0){
+                    delete cartDict[ingredient]
+                }
+            }
+        }
+        updateCart();
+    }
+    function addItemToCart(item){
+        item = $(item).attr('id')
+        if (!((item) in cartDict)){
+            cartDict[item] = 1;
+        }
+        else{
+            cartDict[item] ++
+        }
+        updateCart();
+    }
+    function removeFromCart(item){
+        delete(cartDict[item])
+        updateCart();
+    }
+    function updateCart(){
+        cartString = ""
+        for (var key in cartDict){
+            cartString = cartString + `<tr id ="${key}" style='bottom-border:5px black'><td>${key}</td><td style="padding-left:10px"><input type="number" onchange="cartManuallyChanged(event)" style="width:40px" min="1" value=${cartDict[key]}></td><td style="padding-left:10px"><a href="#" onclick="removeFromCart('${key}')" class="d-none d-md-block"><span class="close">&times;</span></a></tr>`;
+        }
+        $("#cartList").html("<table style='margin:auto'>" + cartString + "</table>")
+    }
+    function cartManuallyChanged(event){
+        let ingredient = event.path[2].id;
+        let quantity = parseInt(event.target.value);
+        cartDict[ingredient]=quantity;
+    }
+    function sortGroceries(){
+        sortedCart=[];
+        for(item in cartDict){
+            sortableItem = {
+                name:item,
+                quantity:cartDict[item],
+                location:alacarteItems[item],
+                locationIndex: locations[alacarteItems[item]]
+            }
+            insertIndex=sortedCart.length;
+            let i=0
+            for (i;i<sortedCart.length;i++){
+                if(sortedCart[i].locationIndex>sortableItem.locationIndex){
+                    insertIndex = i;
+                    break;
+                }
+            }
+            sortedCart.splice(i,0,sortableItem);
+        }
+        let text = ""
+        for(i=0;i<sortedCart.length;i++){
+            item = sortedCart[i]
+            text+= item.name + "- "+item.quantity;
+            if (i!=sortedCart.length-1) {
+                text+= ", ";
+            }
+            else{
+                text+="."
+            }
+        }
+        $('#hiddencart')[0].value=JSON.stringify(sortedCart)
+        $('.incart').removeClass('incart')
+        $('.add').each(function(){this.textContent='Add'})
+        cartDict={};
+        updateCart();
+    }
+    </script>
+{% endblock %}
