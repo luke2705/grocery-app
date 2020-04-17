@@ -1,20 +1,23 @@
+
+body{
+  font-family: 'Patrick Hand', cursive;
+  transition: background-color .5s;
+}
+
 .selectable{
         margin: 5px;
         margin-top:10px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         
 }
-/* .selectable:hover{
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 155, 0, 0.5);
-    cursor: pointer;
-} */
+
 td{
   border-bottom: 1px solid gray;
   padding: 5px 10px 5px 0px;
 }
 
 .incart .selectable{
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 @media (min-width: 992px) { 
@@ -23,6 +26,7 @@ td{
     padding: 5px 50px 5px 0px;
   }
 }
+
 /* The Close Button */
 .close {
     color: #aaaaaa;
@@ -37,6 +41,43 @@ td{
     text-decoration: none;
     cursor: pointer;
   }
+
+  .sidenav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    right:-250px;
+    z-index: 101;
+    background-color: white;  
+    transition: 0.5s;
+    padding-top: 20px;
+    padding-left:15px;
+  }
+
+  .sidenav a:hover {
+    color: #aca8a8;
+  }
+
+  .sidenav .closebtn {
+  padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+
+  .meal img, .meal .btn{
+    opacity: 1;
+    transition: opacity 0.5s;
+  }
+  
 
   /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect
 .flip-card {

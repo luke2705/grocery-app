@@ -1,0 +1,5 @@
+/easy_shop/staticfiles/*
+/easy_shop/static/admin/*
+/easy_shop/__pycache__/*
+*.pyc
+# easy_shop/easy_shop/__pycache__/settings.cpython-38.pyc

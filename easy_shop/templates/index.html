@@ -1,7 +1,16 @@
-<!-- remove incart after generating list, change addto cart to added, translucentify for incart and add a quantity button, make addtocart and recipes a separate buttons -->
-
 {% extends 'base.html' %}
 {% load static %}
+
+{% block nav_block %}
+     <!-- currently designed to only show the cart button on the homepage. may change this later      -->
+          <div class=" navbar-nav ml-auto mt-2 mt-lg-0 d-block d-md-none">
+            <div class="nav-item">
+                <span id='itemcount' class="badge badge-pill badge-light">0</span>
+                <img src="{% static 'shopping-cart.png' %}" style="filter: invert(100%);width:20px;cursor:pointer" alt="not found" onclick="openNav()">
+            </div>
+        </div>
+{% endblock %}
+
 {% block body_block %}
 <div class="container-fluid" >
     <p></p>
@@ -20,7 +29,6 @@
               <div class="tab-content" id="myTabContent" style="margin-top: 10px;">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <h3>So many good meals!</h3>
-                    <button type="submit" class='btn btn-secondary d-block d-md-none' value="Generate List" onclick="document.getElementById('generatelist').click()">Generate List</button>
                     <div class='row'>
                         {% for meal in Meals%}
                         <div id = "{{meal.name}}"  class="col-6 col-sm-4 col-lg-3 meal" style='margin-bottom: 50px;position:static'>
@@ -49,15 +57,14 @@
                 <!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                     <h3>Wow, lots of ingredients!</h3>
                     <ul>
-                    {% for ingredient in Ingredients %}
-                        <li>{{ingredient}}</li>
-                    {% endfor %}
-                    <script></script>
+                        {% for ingredient in Ingredients %}
+                            <li>{{ingredient}}</li>
+                        {% endfor %}
                     </ul>
                 </div> -->
               </div>
         </div>
-        <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74)">
+        <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74)"> 
             <h1>Shopping Cart</h1>
             <form action='/order/' method="POST">
                 {% csrf_token %}
@@ -68,6 +75,15 @@
         </div>
     </div>
 </div>
+<div id='sidecart'>
+<div id="mySidenav" class="sidenav">
+    <h3 >Shopping List</h3>
+    <button type="submit" class='btn btn-secondary d-block d-md-none' value="Generate List" onclick="document.getElementById('generatelist').click()">Generate List</button>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div id='sideCartList'  style="height:70vh;overflow-y: auto;"></div>
+  </div>
+</div>
+
 <script>
     // TODO - figure out how to cleanly parse python dictionary sent from django
     var recipes = JSON.parse('{{recipes}}'.replace(/&#x27;/g,'"'));
@@ -93,9 +109,7 @@
         }
         else{
             for (ingredient in ingredientList){
-                // if (((ingredient) in cartDict)){
                     cartDict[ingredient] = Math.max(cartDict[ingredient] - ingredientList[ingredient], 0); 
-                // }
                 if (cartDict[ingredient] == 0){
                     delete cartDict[ingredient]
                 }
@@ -119,10 +133,14 @@
     }
     function updateCart(){
         cartString = ""
+        count=0
         for (var key in cartDict){
-            cartString = cartString + `<tr id ="${key}" style='bottom-border:5px black'><td>${key}</td><td style="padding-left:10px"><input type="number" onchange="cartManuallyChanged(event)" style="width:40px" min="1" value=${cartDict[key]}></td><td style="padding-left:10px"><a href="#" onclick="removeFromCart('${key}')" class="d-none d-md-block"><span class="close">&times;</span></a></tr>`;
+            cartString = cartString + `<tr id ="${key}" style='bottom-border:5px black'><td>${key}</td><td style="padding-left:10px"><input type="number" onchange="cartManuallyChanged(event)" style="width:40px" min="1" value=${cartDict[key]}></td><td style="padding-left:10px"><a href="#" onclick="removeFromCart('${key}')" ><span class="close">&times;</span></a></td></tr>`;
+            count += cartDict[key]
         }
-        $("#cartList").html("<table style='margin:auto'>" + cartString + "</table>")
+        $("#cartList").html("<table style='margin:auto;'>" + cartString + "</table>")
+        $("#sideCartList").html("<table style='margin:auto;width:200px'>" + cartString + "</table>")
+        $('#itemcount').text(count)
     }
     function cartManuallyChanged(event){
         let ingredient = event.path[2].id;
@@ -165,5 +183,23 @@
         cartDict={};
         updateCart();
     }
-    </script>
+    function openNav() {
+        document.getElementById("mySidenav").style.right = "0px";
+        document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+        $(".meal img, .meal .btn").each(function() {
+            $(this).css("opacity", "0.4");
+        });
+        // get all imgs that are in elements within a meals class
+        // document.getElementById("dim").style.display = "block";
+        // $('#dim').attr('display','block')
+    }        
+    function closeNav() {
+        document.getElementById("mySidenav").style.right = "-250px";
+        document.body.style.backgroundColor = "white";
+        $(".meal img, .meal .btn").each(function() {
+            $(this).css("opacity", "1");
+        });
+        // document.getElementById("dim").style.display = "none";
+    }
+</script>
 {% endblock %}
