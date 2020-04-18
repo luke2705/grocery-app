@@ -107,9 +107,12 @@
                 }
             }
         }
+        // meal has been deselected, remove the ingredients
         else{
             for (ingredient in ingredientList){
-                    cartDict[ingredient] = Math.max(cartDict[ingredient] - ingredientList[ingredient], 0); 
+                    if (cartDict[ingredient] != undefined){
+                        cartDict[ingredient] = Math.max(cartDict[ingredient] - ingredientList[ingredient], 0); 
+                    }
                 if (cartDict[ingredient] == 0){
                     delete cartDict[ingredient]
                 }
