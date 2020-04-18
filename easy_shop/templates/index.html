@@ -64,7 +64,7 @@
                 </div> -->
               </div>
         </div>
-        <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74)"> 
+        <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74); position:fixed; right:0;top:98px"> 
             <h1>Shopping Cart</h1>
             <form action='/order/' method="POST">
                 {% csrf_token %}
@@ -76,11 +76,11 @@
     </div>
 </div>
 <div id='sidecart'>
-<div id="mySidenav" class="sidenav">
-    <h3 >Shopping List</h3>
-    <button type="submit" class='btn btn-secondary d-block d-md-none' value="Generate List" onclick="document.getElementById('generatelist').click()">Generate List</button>
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <div id='sideCartList'  style="height:70vh;overflow-y: auto;"></div>
+    <div id="mySidenav" class="sidenav">
+        <h3 >Shopping List</h3>
+        <button type="submit" class='btn btn-secondary d-block d-md-none' value="Generate List" onclick="document.getElementById('generatelist').click()">Generate List</button>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div id='sideCartList'  style="height:70vh;overflow-y: auto;"></div>
   </div>
 </div>
 
