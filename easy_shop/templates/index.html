@@ -15,7 +15,7 @@
 <div class="container-fluid" >
     <p></p>
     <div class="row" style='height:80vh'>
-        <div class="col-md-9 col-12" >
+        <div id='meals' class="col-md-9 col-12" >
             <h1>Meals</h1>
             <!-- content to add tab for meals and a la carte ingredients -->
             <!--<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -191,7 +191,9 @@
         document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
         $(".meal img, .meal .btn").each(function() {
             $(this).css("opacity", "0.4");
+            $(this).attr('disabled','');
         });
+
         // get all imgs that are in elements within a meals class
         // document.getElementById("dim").style.display = "block";
         // $('#dim').attr('display','block')
@@ -201,8 +203,14 @@
         document.body.style.backgroundColor = "white";
         $(".meal img, .meal .btn").each(function() {
             $(this).css("opacity", "1");
+            $(this).removeAttr('disabled','');
         });
         // document.getElementById("dim").style.display = "none";
     }
+    $('#meals').on('click',function(){
+        if (document.getElementById("mySidenav").style.right == "0px"){
+            closeNav();    
+        }
+        });
 </script>
 {% endblock %}
