@@ -189,28 +189,26 @@
     function openNav() {
         document.getElementById("mySidenav").style.right = "0px";
         document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
-        $(".meal img, .meal .btn, .fixed-top").each(function() {
+        $(".meal img, .meal .btn").each(function() {
             $(this).css("opacity", "0.4");
             $(this).attr('disabled','');
         });
-
-        // get all imgs that are in elements within a meals class
-        // document.getElementById("dim").style.display = "block";
-        // $('#dim').attr('display','block')
+        $('.fixed-top').each(function(){$(this).css("background-color","#e98f81")})
     }        
     function closeNav() {
         document.getElementById("mySidenav").style.right = "-250px";
         document.body.style.backgroundColor = "white";
-        $(".meal img, .meal .btn, .fixed-top").each(function() {
+        $(".meal img, .meal .btn").each(function() {
             $(this).css("opacity", "1");
             $(this).removeAttr('disabled','');
         });
-        // document.getElementById("dim").style.display = "none";
+        $('.fixed-top').each(function(){$(this).css("background-color","#ed3418")})
     }
     $('#meals').on('click',function(){
         if (document.getElementById("mySidenav").style.right == "0px"){
             closeNav();    
         }
+        
         });
 </script>
 {% endblock %}
