@@ -189,7 +189,7 @@
     function openNav() {
         document.getElementById("mySidenav").style.right = "0px";
         document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
-        $(".meal img, .meal .btn").each(function() {
+        $(".meal img, .meal .btn, .fixed-top").each(function() {
             $(this).css("opacity", "0.4");
             $(this).attr('disabled','');
         });
@@ -201,7 +201,7 @@
     function closeNav() {
         document.getElementById("mySidenav").style.right = "-250px";
         document.body.style.backgroundColor = "white";
-        $(".meal img, .meal .btn").each(function() {
+        $(".meal img, .meal .btn, .fixed-top").each(function() {
             $(this).css("opacity", "1");
             $(this).removeAttr('disabled','');
         });
