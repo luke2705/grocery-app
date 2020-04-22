@@ -90,6 +90,9 @@
     var locations = JSON.parse('{{Locations}}'.replace(/&#x27;/g,'"'));
     var alacarteItems=JSON.parse('{{Ingredients}}'.replace(/&#x27;/g,'"'));
     var cartDict = (getCookie('cartDict'));
+    if (cartDict ==""){
+        cartDict={};
+    }
     updateCart();
 
     function addMealToCart(item){
