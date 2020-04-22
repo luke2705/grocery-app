@@ -94,6 +94,10 @@
         close[i].onclick = function() {
             var div = this.parentElement;
             div.style.display = "none";
+            console.log(this.parentElement.innerText)
+            text=this.parentElement.innerText;
+            item = (text).split(',')[0];
+            removeFromCartDictCookie(item);
         }
     }
 
@@ -102,9 +106,11 @@
     list.addEventListener('click', function(ev) {
         if (ev.target.tagName === 'LI') {
             ev.target.classList.toggle('checked');
-            text = ev.target.innerText
-            item = (text).split(',')[0]
-            quantity = text.split('- ')[1].split('\n')[0]      
+            text = ev.target.innerText;
+            item = (text).split(',')[0];
+            quantity = text.split('- ')[1].split('\n')[0];
+            console.log(ev);
+            console.log(ev.target)
             if (ev.target.className=='checked'){
               removeFromCartDictCookie(item);
             }
