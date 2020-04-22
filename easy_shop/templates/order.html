@@ -74,6 +74,8 @@
     }
 </style>
 <script>
+    var cart=JSON.parse('{{cart}}'.replace(/&#x27;/g,'"'));
+
     // Create a "close" button and append it to each list item
     var myNodelist = document.getElementsByTagName("LI");
     var i;
@@ -98,10 +100,18 @@
     // Add a "checked" symbol when clicking on a list item
     var list = document.querySelector('.checklist');
     list.addEventListener('click', function(ev) {
-        console.log('ping')
         if (ev.target.tagName === 'LI') {
             ev.target.classList.toggle('checked');
+            text = ev.target.innerText
+            item = (text).split(',')[0]
+            quantity = text.split('- ')[1].split('\n')[0]      
+            if (ev.target.className=='checked'){
+              removeFromCartDictCookie(item);
             }
+            else{
+              addToCartDictCookie(item, quantity);    
+            }
+          }
     }, false);
 </script>
 {%endblock%}

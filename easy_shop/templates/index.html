@@ -64,13 +64,13 @@
                 </div> -->
               </div>
         </div>
-        <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74); position:fixed; right:0;top:98px"> 
+        <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74); position:fixed; right:0;top:98px;"> 
             <h1>Shopping Cart</h1>
             <form action='/order/' method="POST">
                 {% csrf_token %}
                 <input id='hiddencart' type="hidden" name='hidden_input'>
                 <button id='generatelist' type="submit" class='btn btn-secondary' value="Generate List" onclick="sortGroceries()">Generate List</button>
-                <div id="cartList" style="height:70vh;overflow-y: auto;" ></div>
+                <div id="cartList" style="height:70vh;overflow-y: auto;overflow-x: hidden;" ></div>
             </form>
         </div>
     </div>
@@ -89,7 +89,9 @@
     var recipes = JSON.parse('{{recipes}}'.replace(/&#x27;/g,'"'));
     var locations = JSON.parse('{{Locations}}'.replace(/&#x27;/g,'"'));
     var alacarteItems=JSON.parse('{{Ingredients}}'.replace(/&#x27;/g,'"'));
-    var cartDict = {};
+    var cartDict = (getCookie('cartDict'));
+    updateCart();
+
     function addMealToCart(item){
         if (item.textContent == 'Add'){item.textContent='Remove'}
         else {item.textContent='Add'}
@@ -144,6 +146,7 @@
         $("#cartList").html("<table style='margin:auto;'>" + cartString + "</table>")
         $("#sideCartList").html("<table style='margin:auto;width:200px'>" + cartString + "</table>")
         $('#itemcount').text(count)
+        document.cookie= "cartDict=" + JSON.stringify(cartDict)
     }
     function cartManuallyChanged(event){
         let ingredient = event.path[2].id;
@@ -183,8 +186,6 @@
         $('#hiddencart')[0].value=JSON.stringify(sortedCart)
         $('.incart').removeClass('incart')
         $('.add').each(function(){this.textContent='Add'})
-        cartDict={};
-        updateCart();
     }
     function openNav() {
         document.getElementById("mySidenav").style.right = "0px";

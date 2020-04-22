@@ -1,3 +1,36 @@
+function getCookie(cname) {
+    var name = cname + "=";
+    var cookies = document.cookie.split(';');
+    for(var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        while (cookie.charAt(0) == ' ') {
+        cookie = cookie.substring(1);
+        }
+        if (cookie.indexOf(name) == 0) {
+        return JSON.parse(cookie.substring(name.length, cookie.length));
+        }
+    }
+    return "";
+}
+
+function removeFromCartDictCookie(item){
+    updateCookieDict('remove', item)
+}
+function addToCartDictCookie(item, quantity){
+    updateCookieDict('add', item, quantity)
+}
+function updateCookieDict(operation, item, quantity=0){
+    cartDictCookie=getCookie('cartDict');
+    if (operation=='add'){
+        cartDictCookie[item]=parseInt(quantity);
+    }
+    if (operation=='remove'){
+        delete cartDictCookie[item];
+    }
+    document.cookie = "cartDict=" +(JSON.stringify(cartDictCookie))+ ";path=/;"
+}
+    
+    
 // console.log('{{recipes}}')
 // // couldn't figure out how to cleanly parse python dictionary sent from django
 // console.log('{{recipes}}'.replace(/&#x27;/g,'"'))
