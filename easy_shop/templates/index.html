@@ -70,15 +70,21 @@
                 {% csrf_token %}
                 <input id='hiddencart' type="hidden" name='hidden_input'>
                 <button id='generatelist' type="submit" class='btn btn-secondary' value="Generate List" onclick="sortGroceries()">Generate List</button>
+                
                 <div id="cartList" style="height:70vh;overflow-y: auto;overflow-x: hidden;" ></div>
             </form>
+            <button id='clearcart' type="submit" class='btn btn-secondary' value="Clear Cart" onclick="clearCart()">Clear Cart</button>
         </div>
     </div>
 </div>
 <div id='sidecart'>
     <div id="mySidenav" class="sidenav">
         <h3 >Shopping List</h3>
-        <button type="submit" class='btn btn-secondary d-block d-md-none' value="Generate List" onclick="document.getElementById('generatelist').click()">Generate List</button>
+        <div class="row">   
+            <button type="submit" class='btn btn-secondary d-block d-md-none' value="Generate List" style="margin:5px" onclick="document.getElementById('generatelist').click()">Generate List</button>
+            <button type="submit" class='btn btn-secondary d-block d-md-none' value="Clear Cart" style="margin:5px" onclick="document.getElementById('clearcart').click()">Clear Cart</button>    
+        </div>
+        
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <div id='sideCartList'  style="height:70vh;overflow-y: auto;"></div>
   </div>
@@ -93,14 +99,28 @@
     if (cartDict ==""){
         cartDict={};
     }
+    var selectedMeals = (getCookie('selectedMeals'));
+    if (selectedMeals ==""){
+        selectedMeals={};
+    }
     updateCart();
+    updateSelectedMeals();
+
+    function updateSelectedMeals(){
+        for (var meal in selectedMeals){
+            mealDiv = $("div[id='" + meal + "']")
+            mealDiv.toggleClass('incart')
+            mealDiv.find(":button")[0].innerText='Remove'
+        }
+    }
 
     function addMealToCart(item){
         if (item.textContent == 'Add'){item.textContent='Remove'}
         else {item.textContent='Add'}
         meal = $(item).parents('.meal')
         meal.toggleClass('incart')
-        ingredientList = recipes[meal.attr('id')]["ingredients"]
+        mealName = meal.attr('id')
+        ingredientList = recipes[mealName]["ingredients"]
         // add or remove from cart
         if (meal.hasClass('incart')){
             for (ingredient in ingredientList){
@@ -111,6 +131,13 @@
                     cartDict[ingredient] = cartDict[ingredient] + ingredientList[ingredient]; 
                 }
             }
+            if (mealName in selectedMeals){
+                selectedMeals[mealName]+=1;
+            }
+            else{
+                selectedMeals[mealName] = 1;
+            }
+            
         }
         // meal has been deselected, remove the ingredients
         else{
@@ -119,11 +146,16 @@
                         cartDict[ingredient] = Math.max(cartDict[ingredient] - ingredientList[ingredient], 0); 
                     }
                 if (cartDict[ingredient] == 0){
-                    delete cartDict[ingredient]
+                    delete cartDict[ingredient];
                 }
+            }
+            selectedMeals[mealName]-=1;
+            if (selectedMeals[mealName]==0){
+                delete selectedMeals[mealName];
             }
         }
         updateCart();
+        document.cookie= "selectedMeals=" + JSON.stringify(selectedMeals)
     }
     function addItemToCart(item){
         item = $(item).attr('id')
@@ -138,6 +170,17 @@
     function removeFromCart(item){
         delete(cartDict[item])
         updateCart();
+    }
+    function clearCart(){
+        cartDict = {};
+        document.cookie= "cartDict=;expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+        updateCart();
+
+        // reset styling of previously selected meals
+        $('.incart').toggleClass('incart')
+        document.cookie= "selectedMeals=;expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+        $('button:contains(Remove)').each(function(){this.innerText='Add';});
+
     }
     function updateCart(){
         cartString = ""

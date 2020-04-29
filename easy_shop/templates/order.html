@@ -94,10 +94,10 @@
         close[i].onclick = function() {
             var div = this.parentElement;
             div.style.display = "none";
-            console.log(this.parentElement.innerText)
             text=this.parentElement.innerText;
             item = (text).split(',')[0];
             removeFromCartDictCookie(item);
+            document.cookie= "selectedMeals=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
         }
     }
 
@@ -109,10 +109,10 @@
             text = ev.target.innerText;
             item = (text).split(',')[0];
             quantity = text.split('- ')[1].split('\n')[0];
-            console.log(ev);
-            console.log(ev.target)
             if (ev.target.className=='checked'){
               removeFromCartDictCookie(item);
+              document.cookie= "selectedMeals=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+              console.log('remove')
             }
             else{
               addToCartDictCookie(item, quantity);    
