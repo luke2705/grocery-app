@@ -16,16 +16,16 @@
     <p></p>
     <div class="row" style='height:80vh'>
         <div id='meals' class="col-md-9 col-12" >
-            <h1>Meals</h1>
+            <!-- <h1>Meals</h1> -->
             <!-- content to add tab for meals and a la carte ingredients -->
-            <!--<ul class="nav nav-tabs" id="myTab" role="tablist">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Meals</a>
+                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" style="background: transparent;">Meals</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Items</a>
+                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" style="background: transparent;">Items</a>
                 </li>
-              </ul> -->
+            </ul>
               <div class="tab-content" id="myTabContent" style="margin-top: 10px;">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <h3>So many good meals!</h3>
@@ -37,7 +37,7 @@
                                 <div class='flip-card-inner'> -->
                                     <div class="selectable flip-card-front" style="text-align: center;">
                                         <div  style="text-align: center;"><h4 class='text-truncate' style="padding: 2px;">{{meal.name}}</h4></div>
-                                        <img src="{{meal.image.url}}" style="height:150px;width:100%;">
+                                        <img src="{{meal.image.url}}" style="height:auto;width:100%;">
                                     </div>
                                     <!-- continued stub for adding a flippable backside with recipe -->
                                     <!-- <div class="flip-card-back selectable">
@@ -53,15 +53,25 @@
                         {% endfor %}
                     </div>
                 </div>
-                <!-- this is a stub for the ingredients tab -->
-                <!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <h3>Wow, lots of ingredients!</h3>
-                    <ul>
+                <!-- ingredients tab -->
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <h3>Favorites</h3>
+                    <div id='favorites-list'></div>
+                    <hr>
+                    <h3>Browse A La Carte Items...</h3>
+                    <input type="search" name="search" placeholder="Search..." class='form-control'>
                         {% for ingredient in Ingredients %}
-                            <li>{{ingredient}}</li>
+                        <span id='{{ingredient|cut:" "}}' class='ingredient'>
+                            <span onclick="addItemToCart(this)" style="display: inline-block;padding-left:5px">{{ingredient}}</span>
+                            <div id='{{ingredient|cut:" "}}-favorite' class="favorite" onclick="toggleFavorite('{{ingredient}}')">
+                                <span id="{{ingredient|cut:' '}}-fa" class="fa fa-star-o" style="display: inline-block;"></span>
+                                <!-- <div class="ring"></div>
+                                <div class="ring2"></div> -->
+                            </div>
+                        </span>
                         {% endfor %}
                     </ul>
-                </div> -->
+                </div>
               </div>
         </div>
         <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74); position:fixed; right:0;top:98px;"> 
@@ -69,8 +79,7 @@
             <form action='/order/' method="POST">
                 {% csrf_token %}
                 <input id='hiddencart' type="hidden" name='hidden_input'>
-                <button id='generatelist' type="submit" class='btn btn-secondary' value="Generate List" onclick="sortGroceries()">Generate List</button>
-                
+                <button id='generatelist' type="submit" class='btn btn-secondary' value="Generate List" onclick="sortGroceries()">Generate List</button>         
                 <div id="cartList" style="height:70vh;overflow-y: auto;overflow-x: hidden;" ></div>
             </form>
             <button id='clearcart' type="submit" class='btn btn-secondary' value="Clear Cart" onclick="clearCart()">Clear Cart</button>
@@ -96,16 +105,76 @@
     var locations = JSON.parse('{{Locations}}'.replace(/&#x27;/g,'"'));
     var alacarteItems=JSON.parse('{{Ingredients}}'.replace(/&#x27;/g,'"'));
     var cartDict = (getCookie('cartDict'));
-    if (cartDict ==""){
-        cartDict={};
-    }
     var selectedMeals = (getCookie('selectedMeals'));
-    if (selectedMeals ==""){
-        selectedMeals={};
-    }
+    var favorites = (getCookie('favorites'))['favorites'];
+    if (favorites==undefined){favorites=[];}
     updateCart();
     updateSelectedMeals();
-
+    initFavorites();
+    function initFavorites(){        
+        html = ""
+        if (favorites.length==0){
+            $('#favorites-list')[0].innerHTML = "<h4>Uh oh! You dont have any favorites yet!</h4>"
+            return
+        }
+        favorites.forEach(element => {
+            html+='<span id=&#39;'+ element +'&#39; class=ingredient onclick="addItemToCart(this)" style="padding:0 5px 0 5px">'+element+'</span>'
+            favorite = element.replace(/\s/g,"");
+            $('#'+favorite+'-favorite').toggleClass('active')
+            $('#'+favorite+'-fa').toggleClass(['fa-star','fa-star-o'])
+        });
+        $('#favorites-list')[0].innerHTML = html
+    }
+    function updateFavorites(){        
+        html = ""
+        if (favorites.length==0){
+            $('#favorites-list')[0].innerHTML = "<h4>Uh oh! You dont have any favorites yet!</h4>"
+            return
+        }
+        for (var favorite in favorites){
+            html+='<span id=&#39;'+ favorites[favorite] +'&#39; class=ingredient onclick="addItemToCart(this)" style="padding:0 5px 0 5px">'+favorites[favorite]+'</span>'
+        }
+        $('#favorites-list')[0].innerHTML = html
+    }
+    function toggleFavorite(ingredient){
+        // a lot of the code below has been stripped with the removal of the ring animation
+        //change the id to remove spaces from ingredients
+        short_ingredient = ingredient.replace(/\s/g, "");
+        // remove the favorite
+        if ($('#'+short_ingredient+'-fa').hasClass("fa-star")) {
+                $('#'+short_ingredient+'-favorite').removeClass('active')
+            // setTimeout(function() {
+            //     $('#'+ingredient+'-favorite').removeClass('active-2')
+            // }, 30)
+            //     $('#'+ingredient+'-favorite').removeClass('active-3')
+            // setTimeout(function() {
+                $('#'+short_ingredient+'-fa').removeClass('fa-star')
+                $('#'+short_ingredient+'-fa').addClass('fa-star-o')
+            // }, 15)
+            console.log('start')
+            index = favorites.indexOf(ingredient);
+            favorites.splice(index,1);
+            console.log('end')
+        } else {
+            // add the favorite
+            $('#'+short_ingredient+'-favorite').addClass('active')
+            $('#'+short_ingredient+'-favorite').addClass('active-2')
+            // setTimeout(function() {
+                $('#'+short_ingredient+'-fa').addClass('fa-star')
+                $('#'+short_ingredient+'-fa').removeClass('fa-star-o')
+            // }, 150)
+            setTimeout(function() {
+                $('#'+short_ingredient+'-favorite').addClass('active-3')
+            }, 150)
+            setTimeout(function() { 
+                $('#'+short_ingredient+'-favorite').removeClass('active-2');
+                $('#'+short_ingredient+'-favorite').removeClass('active-3');
+            }, 150)
+            favorites.push(ingredient)
+        }
+        document.cookie = 'favorites={"favorites":'+JSON.stringify(favorites)+'}';
+        updateFavorites();
+    }
     function updateSelectedMeals(){
         for (var meal in selectedMeals){
             mealDiv = $("div[id='" + meal + "']")
@@ -158,7 +227,8 @@
         document.cookie= "selectedMeals=" + JSON.stringify(selectedMeals)
     }
     function addItemToCart(item){
-        item = $(item).attr('id')
+        // item = $(item).attr('id')
+        item = (item.innerText)
         if (!((item) in cartDict)){
             cartDict[item] = 1;
         }

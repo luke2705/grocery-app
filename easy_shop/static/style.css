@@ -11,6 +11,18 @@ body{
         
 }
 
+.ingredient{
+  margin: 5px;
+  margin-top:10px;
+  /* padding:0 5px 0 5px; */
+  cursor: pointer;
+  display: inline-block;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);
+  -webkit-user-select: none; /* Chrome/Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+}
+
 td{
   border-bottom: 1px solid gray;
   padding: 5px 10px 5px 0px;
@@ -77,7 +89,91 @@ td{
     opacity: 1;
     transition: opacity 0.5s;
   }
+
+
+/* favorite button styling */
+  .favorite {
+      /* font-size: 33px; */
+      color: rgba(0,0,0,.5);
+      /* width: 18px;
+      height: 18px; */
+      /* margin: 0 auto; */
+      /* margin-top: 20px; */
+      /* position: relative; */
+      cursor: pointer;
+      display: inline;
+      
+  }
+
+
+  .favorite span {
+      /* margin-left: 4px;
+      margin-top: 3px; */
+      z-index: 1;
+      /* position: absolute; */
+  }
+
+  .fa:hover {
+      opacity: 0.8;
+  }
+
+  span:active {
+      transform: scale(0.93,0.93)
+  }
+
+  /* .ring, .ring2 {
+      opacity: 0;
+      background: grey;
+      width: 1px;
+      height: 1px;
+      position: absolute;
+      top: 13px;
+      left: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+  } */
+
+  .ingredient .active span,.ingredient .active-2 span {
+      color: #F5CC27 !important;
+  }
+/* 
+  .active-2 .ring {
+      width: 19px !important;
+      height: 19px !important;
+      top: 3px !important;
+      left: 1px !important;
+      position: absolute;
+      border-radius: 50%;
+      opacity: 1 !important;
+  }
+
+  .active-2 .ring {
+      background: #F5CC27 !important;
+  }
+
+  .active-2 .ring2 {
+      background: #fff !important;
+  }
+
+  .active-3 .ring2 {
+      width: 21px !important;
+      height: 21px !important;
+      top: 2px !important;
+      left: 0px !important;
+      position: absolute;
+      border-radius: 50%;
+      opacity: 1 !important;
+  } */
+
+  .ring, .ring2, fa {
+      transition: all .32s ease;
+  }
   
+  .fa{
+    font-size: 14px;
+    /* padding-top: 3px; */
+    padding: 2px 2px 2px 0;
+  }
 
   /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect
 .flip-card {

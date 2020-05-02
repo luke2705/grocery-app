@@ -10,7 +10,7 @@ function getCookie(cname) {
         return JSON.parse(cookie.substring(name.length, cookie.length));
         }
     }
-    return "";
+    return {};
 }
 
 function removeFromCartDictCookie(item){
@@ -30,7 +30,9 @@ function updateCookieDict(operation, item, quantity=0){
     document.cookie = "cartDict=" +(JSON.stringify(cartDictCookie))+ ";path=/;"
 }
     
+
     
+
 // console.log('{{recipes}}')
 // // couldn't figure out how to cleanly parse python dictionary sent from django
 // console.log('{{recipes}}'.replace(/&#x27;/g,'"'))

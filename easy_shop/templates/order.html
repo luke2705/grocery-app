@@ -112,7 +112,6 @@
             if (ev.target.className=='checked'){
               removeFromCartDictCookie(item);
               document.cookie= "selectedMeals=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
-              console.log('remove')
             }
             else{
               addToCartDictCookie(item, quantity);    
