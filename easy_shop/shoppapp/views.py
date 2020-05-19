@@ -100,6 +100,6 @@ def items(request):
     if request.method =='POST':
         data = json.loads(request.body)
         location = Location.objects.filter(name=data['location'])[0]
-        item = Ingredient(name=data['item'], location = location)
+        item = Ingredient(name=data['item'], location = location, user=request.user)
         item.save()
         return JsonResponse({}, status=201, safe=False)
