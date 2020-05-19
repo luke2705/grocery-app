@@ -111,8 +111,8 @@
     if (favorites==undefined){favorites=[];}
     updateCart();
     updateSelectedMeals();
-    initFavorites();
     updateBrowse(alacarteItems)
+    initFavorites();
 
     function updateBrowse(alacarteItems){
         $('#browse-items')[0].innerHTML=""
@@ -171,16 +171,17 @@
         html = ""
         if (favorites.length==0){
             $('#favorites-list')[0].innerHTML = "<h4>Uh oh! You dont have any favorites yet!</h4>"
-            return
         }
-        favorites.sort();
-        favorites.forEach(element => {
-            html+='<span id=&#39;'+ element +'&#39; class=ingredient onclick="addItemToCart(this)" style="padding:0 5px 0 5px">'+element+'</span>'
-            favorite = element.replace(/\s/g,"");
-            $('#'+favorite+'-favorite').toggleClass('active')
-            $('#'+favorite+'-fa').toggleClass(['fa-star','fa-star-o'])
-        });
-        $('#favorites-list')[0].innerHTML = html
+        else{
+            favorites.sort();
+            favorites.forEach(element => {
+                html+='<span id=&#39;'+ element +'&#39; class=ingredient onclick="addItemToCart(this)" style="padding:0 5px 0 5px">'+element+'</span>'
+                favorite = element.replace(/\s/g,"");
+                $('#'+favorite+'-favorite').toggleClass('active')
+                $('#'+favorite+'-fa').toggleClass(['fa-star','fa-star-o'])
+            });
+            $('#favorites-list')[0].innerHTML = html
+        }
     }
     function updateFavorites(){        
         html = ""
