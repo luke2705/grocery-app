@@ -1,15 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block nav_block %}
-     <!-- currently designed to only show the cart button on the homepage. may change this later      -->
-          <div class=" navbar-nav ml-auto mt-2 mt-lg-0 d-block d-md-none">
-            <div class="nav-item">
-                <span id='itemcount' class="badge badge-pill badge-light">0</span>
-                <img src="{% static 'shopping-cart.png' %}" style="filter: invert(100%);width:20px;cursor:pointer" alt="not found" onclick="openNav()">
-            </div>
-        </div>
-{% endblock %}
 
 {% block body_block %}
 <div class="container-fluid" >
@@ -23,7 +14,7 @@
                   <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true" style="background: transparent;">Meals</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false" style="background: transparent;">Items</a>
+                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#items" role="tab" aria-controls="profile" aria-selected="false" style="background: transparent;">Items</a>
                 </li>
             </ul>
               <div class="tab-content" id="myTabContent" style="margin-top: 10px;">
@@ -54,26 +45,33 @@
                     </div>
                 </div>
                 <!-- ingredients tab -->
-                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="profile-tab">
                     <h3>Favorites</h3>
                     <div id='favorites-list'></div>
                     <hr>
-                    <h3>Browse A La Carte Items...</h3>
-                    <!-- <input type="search" name="search" placeholder="Search..." class='form-control' style="background-color: transparent;"> -->
-                        <script>
-                            console.log('{{Ingredients}}')
-                        </script>
-                        {% for ingredient in Ingredients|dictsort:0 %}
-                        <span id='{{ingredient|cut:" "}}' class='ingredient'>
-                            <span onclick="addItemToCart(this)" style="display: inline-block;padding-left:5px">{{ingredient}}</span>
-                            <div id='{{ingredient|cut:" "}}-favorite' class="favorite" onclick="toggleFavorite('{{ingredient}}')">
-                                <span id="{{ingredient|cut:' '}}-fa" class="fa fa-star-o" style="display: inline-block;"></span>
-                                <!-- <div class="ring"></div>
-                                <div class="ring2"></div> -->
+                    <h3>Browse A La Carte Items</h3>
+                    <input type="search" name="search" placeholder="Search..." class='form-control' style="background-color: transparent;">
+                    <div id='browse-items'></div>
+                    <hr>
+                    <h3>Add New Item</h3>
+                    <form id="add-item">
+                        <div class="form-row">
+                            <div class="form-group col-6">
+                                <label for="">Item Name</label>
+                                <input type="text" id="new-item" class="form-control" placeholder="Enter New Item Name..." aria-describedby="helpId">    
                             </div>
-                        </span>
-                        {% endfor %}
-                    </ul>
+                            <div class="form-group col-6">
+                                <label for="inputState">Location</label>
+                                <select id="inputState" class="form-control">
+                                    <option selected>Choose...</option>
+                                    {% for location in Locations %}                
+                                        <option selected>{{location}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>      
+                        </div>
+                        <button type="submit" class="btn btn-danger">Add Item</button>
+                    </form>
                 </div>
               </div>
         </div>
@@ -106,7 +104,7 @@
     // TODO - figure out how to cleanly parse python dictionary sent from django
     var recipes = JSON.parse('{{recipes}}'.replace(/&#x27;/g,'"'));
     var locations = JSON.parse('{{Locations}}'.replace(/&#x27;/g,'"'));
-    var alacarteItems=JSON.parse('{{Ingredients}}'.replace(/&#x27;/g,'"'));
+    var alacarteItems=JSON.parse('{{Ingredients|dictsort:0}}'.replace(/&#x27;/g,'"'));    
     var cartDict = (getCookie('cartDict'));
     var selectedMeals = (getCookie('selectedMeals'));
     var favorites = (getCookie('favorites'))['favorites'];
@@ -114,6 +112,61 @@
     updateCart();
     updateSelectedMeals();
     initFavorites();
+    updateBrowse(alacarteItems)
+
+    function updateBrowse(alacarteItems){
+        $('#browse-items')[0].innerHTML=""
+        alacarteItems.sort(caseInsensitiveSort)
+        alacarteItems.forEach(item=>{
+            item_html = `<span id='__item__' class='ingredient'>
+                             <span onclick="addItemToCart(this)" style="display: inline-block;padding-left:5px">__item_long__</span>
+                             <div id='__item__-favorite' class="favorite" onclick="toggleFavorite('__item_long__')">
+                                 <span id="__item__-fa" class="fa fa-star-o" style="display: inline-block;"></span>
+                             </div>
+                         </span>`
+            item_html = item_html.replace(/__item__/g, item.replace(/\s/g, ""))
+            item_html = item_html.replace(/__item_long__/g, item)
+            $('#browse-items').append(item_html)
+        })
+    }
+    
+    $('#add-item').on('submit', function(event){
+        event.preventDefault();
+        item = titleCase(event.target.elements[0].value)
+        item_location = event.target.elements[1].value
+        data = {'item':item, 'location':item_location};
+        $.ajax({
+            url : "/items/",
+            type : "POST",
+            data : JSON.stringify(data), 
+
+            success : function(json) {
+                // clear out any content from previous game
+                alacarteItems.push(item)
+                updateBrowse(alacarteItems)
+                $('#'+item.replace(/\s/g,"")).addClass('item-highlight')
+                $('#new-item')[0].value=''
+            },
+
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+                alert('must be logged in to add ingredients')
+            }
+        });       
+    });
+    function caseInsensitiveSort(a, b){
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+    }
+    function titleCase(str) {
+        return str.replace(
+            /\w\S*/g,
+            function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        );
+    }
+    
+
     function initFavorites(){        
         html = ""
         if (favorites.length==0){

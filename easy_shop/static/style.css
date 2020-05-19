@@ -17,7 +17,8 @@ body{
   /* padding:0 5px 0 5px; */
   cursor: pointer;
   display: inline-block;
-  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);
+  /* box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19); */
+  box-shadow: 0px 2px 4px 0 rgba(53, 107, 27, 0.77), 0 1px 2px 0 rgba(0, 0, 0, 0.19);
   -webkit-user-select: none; /* Chrome/Safari */        
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+ */
@@ -173,6 +174,23 @@ td{
     font-size: 14px;
     /* padding-top: 3px; */
     padding: 2px 2px 2px 0;
+  }
+
+  /* new item flash */
+  @keyframes yellowfade {
+    from {
+      background: rgb(255, 240, 105);
+      /* box-shadow: 0 2px 10px 0 rgba(251, 255, 4, 0.2), 0 1px 2px 0 rgba(251, 255, 0, 0.19) */
+      box-shadow: 0 0 15px 5px rgba(251, 255, 4, 1), 0 0 15px 5px rgba(251, 255, 4, 1);;
+    }
+    to {
+      background: transparent;
+      box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19)
+    }
+  }
+  
+  .item-highlight {
+    animation: yellowfade 1.3s;
   }
 
   /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect

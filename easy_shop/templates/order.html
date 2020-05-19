@@ -5,7 +5,7 @@
     <ul class='checklist' id="myUL">
         {% csrf_token %}
         {% for item in cart%}
-        <li>{{item.name}}, quantity - {{item.quantity}}</li>
+        <li class='item'>{{item.name}}, quantity - {{item.quantity}}</li>
         {% endfor %}
     </ul>    
 </div>
@@ -13,7 +13,7 @@
 <!-- https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_todo -->
 <style>    
     /* Style the list items */
-    ul li {
+     .item {
       cursor: pointer;
       position: relative;
       padding: 12px 8px 12px 40px;
@@ -30,24 +30,24 @@
     }
     
     /* Set all odd list items to a different color (zebra-stripes) */
-    ul li:nth-child(odd) {
+    .item:nth-child(odd) {
       background: #f9f9f9;
     }
     
     /* Darker background-color on hover */
-    ul li:hover {
+    .item:hover {
       background: #ddd;
     }
     
     /* When clicked on, add a background color and strike out text */
-    ul li.checked {
+    .item.checked {
       background: #888;
       color: white;
       text-decoration: line-through;
     }
     
     /* Add a "checked" mark when clicked on */
-    ul li.checked::before {
+    .item.checked::before {
       content: '';
       position: absolute;
       border-color: #fff;
@@ -77,7 +77,8 @@
     var cart=JSON.parse('{{cart}}'.replace(/&#x27;/g,'"'));
 
     // Create a "close" button and append it to each list item
-    var myNodelist = document.getElementsByTagName("LI");
+    // var myNodelist = document.getElementsByTagName("LI");
+    var myNodelist =document.getElementsByClassName("item")
     var i;
     for (i = 0; i < myNodelist.length; i++) {
         var span = document.createElement("SPAN");

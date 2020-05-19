@@ -21,6 +21,10 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.indexTV.as_view()),
-    path('order/',views.order, name='order')
+    path('',views.indexTV.as_view(), name='home'),
+    path('order/',views.order, name='order'),
+    path('items/',views.items, name='items'),
+    path('login/',views.user_login, name='user_login'),
+    path('register/',views.register, name='register'),
+    path('logout/', views.user_logout, name='logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
