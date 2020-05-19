@@ -1,3 +1,4 @@
+
 function getCookie(cname) {
     var name = cname + "=";
     var cookies = document.cookie.split(';');
@@ -30,8 +31,18 @@ function updateCookieDict(operation, item, quantity=0){
     document.cookie = "cartDict=" +(JSON.stringify(cartDictCookie))+ ";path=/;"
 }
     
+function caseInsensitiveSort(a, b){
+    return a.toLowerCase().localeCompare(b.toLowerCase());
+}
+function titleCase(str) {
+    return str.replace(
+        /\w\S*/g,
+        function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
+    );
+}
 
-    
 
 // console.log('{{recipes}}')
 // // couldn't figure out how to cleanly parse python dictionary sent from django

@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 {%block body_block%}
 <div class="container">
-    <h1>Shopping List</h1>
+    <h1 style="margin: 15px;">Shopping List</h1>
     <ul class='checklist' id="myUL">
         {% csrf_token %}
         {% for item in cart%}
@@ -77,7 +77,6 @@
     var cart=JSON.parse('{{cart}}'.replace(/&#x27;/g,'"'));
 
     // Create a "close" button and append it to each list item
-    // var myNodelist = document.getElementsByTagName("LI");
     var myNodelist =document.getElementsByClassName("item")
     var i;
     for (i = 0; i < myNodelist.length; i++) {

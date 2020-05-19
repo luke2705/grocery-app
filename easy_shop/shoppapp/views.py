@@ -32,6 +32,7 @@ class indexTV(TemplateView):
         for location in Location.objects.all():
             locations[location.name] = location.rank
         context['Locations'] = locations
+        
 
         # create ingredients dict as ingredient:location
         ingredients = {}
@@ -95,7 +96,7 @@ def register(request):
                            'registered':registered})
 
 @csrf_exempt
-@login_required
+
 def items(request):
     if request.method =='POST':
         data = json.loads(request.body)
@@ -103,3 +104,25 @@ def items(request):
         item = Ingredient(name=data['item'], location = location, user=request.user)
         item.save()
         return JsonResponse({}, status=201, safe=False)
+    else:
+        context = {}
+        context['Locations'] = locationsDict()
+
+        
+        # create ingredients dict as ingredient:location
+        ingredients = {}
+        if request.user.is_active:
+            queryset = Ingredient.objects.filter(Q(user=None)|Q(user=request.user))
+        else:
+            queryset = Ingredient.objects.filter(user=None)
+        for ingredient in queryset:
+            ingredients[ingredient.name] = ingredient.location.name
+        context['Ingredients'] = ingredients
+        return render(request, 'items.html', context)
+
+def locationsDict():
+        # create locations dict as location:rank
+        locations = {}
+        for location in Location.objects.all():
+            locations[location.name] = location.rank
+        return locations

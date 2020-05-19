@@ -7,32 +7,33 @@
     <p></p>
     <div class="row" style='height:80vh'>
         <div id='meals' class="col-md-9 col-12" >
-                
-                    <h2>Browse meals</h2>
-                    <div class='row'>
-                        {% for meal in Meals%}
-                        <div id = "{{meal.name}}"  class="col-6 col-sm-4 col-lg-3 meal" style='margin-bottom: 50px;position:static'>
-                            <!-- stub for adding a flippable backside with recipe, https://www.w3schools.com/howto/howto_css_flip_card.asp-->
-                            <!-- <div class='flip-card'>
-                                <div class='flip-card-inner'> -->
-                                    <div class="selectable flip-card-front" style="text-align: center;">
-                                        <div  style="text-align: center;"><h4 class='text-truncate' style="padding: 2px;">{{meal.name}}</h4></div>
-                                        <img src="{{meal.image.url}}" style="height:auto;width:100%;">
-                                    </div>
-                                    <!-- continued stub for adding a flippable backside with recipe -->
-                                    <!-- <div class="flip-card-back selectable">
-                                        <h1>Recipe</h1>
-                                        <ul><li>chicken</li><li>rice</li></ul>    
-                                    </div> -->
-                                <!-- </div>
-                            </div> -->
-                            <div class="row">
-                                <div class='col-12' style="padding:5px;text-align: center;"><button id='button{{meal.name}}' class='add btn btn-danger' style="width:90px;text-align: center;" onclick="addMealToCart(this)">Add</button></div>
+                    <h3>Favorites</h3>
+                    <div id='favorites-list'></div>
+                    <hr>
+                    <h3>Browse A La Carte Items</h3>
+                    <input type="search" name="search" placeholder="Search..." class='form-control' style="background-color: transparent;">
+                    <div id='browse-items'></div>
+                    <hr>
+                    <h3>Add New Item</h3>
+                    <form id="add-item">
+                        <div class="form-row">
+                            <div class="form-group col-6">
+                                <label for="">Item Name</label>
+                                <input type="text" id="new-item" class="form-control" placeholder="Enter New Item Name..." aria-describedby="helpId">    
                             </div>
+                            <div class="form-group col-6">
+                                <label for="inputState">Location</label>
+                                <select id="inputState" class="form-control">
+                                    <option selected>Choose...</option>
+                                    {% for location in Locations %}                
+                                        <option selected>{{location}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>      
                         </div>
-                        {% endfor %}
-                    </div>
-                             
+                        <button type="submit" class="btn btn-danger">Add Item</button>
+                    </form>
+                <!-- </div> -->
               
         </div>
         <div id='cart' class="col-md-3 d-md-block d-none" style="border-left:1px solid rgba(212, 212, 212, 0.74); position:fixed; right:0;top:98px;"> 
@@ -62,16 +63,12 @@
 
 <script>
     // TODO - figure out how to cleanly parse python dictionary sent from django
-    var recipes = JSON.parse('{{recipes}}'.replace(/&#x27;/g,'"'));
     var locations = JSON.parse('{{Locations}}'.replace(/&#x27;/g,'"'));
     var alacarteItems=JSON.parse('{{Ingredients|dictsort:0}}'.replace(/&#x27;/g,'"'));    
-    
     var cartDict = (getCookie('cartDict'));
-    var selectedMeals = (getCookie('selectedMeals'));
     var favorites = (getCookie('favorites'))['favorites'];
     if (favorites==undefined){favorites=[];}
     updateCart();
-    updateSelectedMeals();
     updateBrowse(alacarteItems)
     initFavorites();
 
@@ -114,7 +111,9 @@
                 alert('must be logged in to add ingredients')
             }
         });       
-    });    
+    });
+
+    
 
     function initFavorites(){        
         html = ""
@@ -151,16 +150,26 @@
         // remove the favorite
         if ($('#'+short_ingredient+'-fa').hasClass("fa-star")) {
                 $('#'+short_ingredient+'-favorite').removeClass('active')
+            // setTimeout(function() {
+            //     $('#'+ingredient+'-favorite').removeClass('active-2')
+            // }, 30)
+            //     $('#'+ingredient+'-favorite').removeClass('active-3')
+            // setTimeout(function() {
                 $('#'+short_ingredient+'-fa').removeClass('fa-star')
                 $('#'+short_ingredient+'-fa').addClass('fa-star-o')
+            // }, 15)
+            console.log('start')
             index = favorites.indexOf(ingredient);
             favorites.splice(index,1);
+            console.log('end')
         } else {
             // add the favorite
             $('#'+short_ingredient+'-favorite').addClass('active')
             $('#'+short_ingredient+'-favorite').addClass('active-2')
+            // setTimeout(function() {
                 $('#'+short_ingredient+'-fa').addClass('fa-star')
                 $('#'+short_ingredient+'-fa').removeClass('fa-star-o')
+            // }, 150)
             setTimeout(function() {
                 $('#'+short_ingredient+'-favorite').addClass('active-3')
             }, 150)
@@ -170,7 +179,7 @@
             }, 150)
             favorites.push(ingredient)
         }
-        document.cookie = 'favorites={"favorites":'+JSON.stringify(favorites)+'}';
+        document.cookie = 'favorites={"favorites":'+JSON.stringify(favorites)+'};path=/;';
         updateFavorites();
     }
     function updateSelectedMeals(){
@@ -260,7 +269,7 @@
         $("#cartList").html("<table style='margin:auto;'>" + cartString + "</table>")
         $("#sideCartList").html("<table style='margin:auto;width:200px'>" + cartString + "</table>")
         $('#itemcount').text(count)
-        document.cookie= "cartDict=" + JSON.stringify(cartDict)
+        document.cookie= "cartDict=" + JSON.stringify(cartDict)+ ";path=/;"
     }
     function cartManuallyChanged(event){
         let ingredient = event.path[2].id;
@@ -276,7 +285,6 @@
                 location:alacarteItems[item],
                 locationIndex: locations[alacarteItems[item]]
             }
-
             insertIndex=sortedCart.length;
             let i=0
             for (i;i<sortedCart.length;i++){
@@ -298,7 +306,6 @@
                 text+="."
             }
         }
-
         $('#hiddencart')[0].value=JSON.stringify(sortedCart)
         $('.incart').removeClass('incart')
         $('.add').each(function(){this.textContent='Add'})
