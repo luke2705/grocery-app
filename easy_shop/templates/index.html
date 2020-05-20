@@ -64,7 +64,8 @@
     // TODO - figure out how to cleanly parse python dictionary sent from django
     var recipes = JSON.parse('{{recipes}}'.replace(/&#x27;/g,'"'));
     var locations = JSON.parse('{{Locations}}'.replace(/&#x27;/g,'"'));
-    var alacarteItems=JSON.parse('{{Ingredients|dictsort:0}}'.replace(/&#x27;/g,'"'));    
+    // var alacarteItems=JSON.parse('{{Ingredients|dictsort:0}}'.replace(/&#x27;/g,'"'));    
+    var alacarteItems=JSON.parse('{{Ingredients}}'.replace(/&#x27;/g,'"'));    
     
     var cartDict = (getCookie('cartDict'));
     var selectedMeals = (getCookie('selectedMeals'));
