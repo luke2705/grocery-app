@@ -1,14 +1,17 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
-from shoppapp.models import User, Ingredient, Meal, MealIngredients, Order, OrderIngredients, Location
 import json
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+
 from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.urls import reverse
+from django.views.generic import TemplateView
+from django.views.decorators.csrf import csrf_exempt
+
+
 from easy_shop.forms import UserForm
+from shoppapp.models import User, Ingredient, Meal, MealIngredients, Order, OrderIngredients, Location
 
 class indexTV(TemplateView):
     template_name = 'index.html'
