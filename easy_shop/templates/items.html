@@ -64,7 +64,7 @@
 <script>
     // TODO - figure out how to cleanly parse python dictionary sent from django
     var locations = JSON.parse('{{Locations}}'.replace(/&#x27;/g,'"'));
-    var alacarteItems=JSON.parse('{{Ingredients|dictsort:0}}'.replace(/&#x27;/g,'"'));    
+    var alacarteItems=JSON.parse('{{Ingredients}}'.replace(/&#x27;/g,'"'));
     var cartDict = (getCookie('cartDict'));
     var favorites = (getCookie('favorites'))['favorites'];
     if (favorites==undefined){favorites=[];}
@@ -74,8 +74,10 @@
 
     function updateBrowse(alacarteItems){
         $('#browse-items')[0].innerHTML=""
-        alacarteItems.sort(caseInsensitiveSort)
-        alacarteItems.forEach(item=>{
+        // alacarteItems is actually an object with the key:value being item:location_index
+        items = Object.keys(alacarteItems)
+        items.sort(caseInsensitiveSort)
+        items.forEach(item=>{
             item_html = `<span id='__item__' class='ingredient'>
                              <span onclick="addItemToCart(this)" style="display: inline-block;padding-left:5px">__item_long__</span>
                              <div id='__item__-favorite' class="favorite" onclick="toggleFavorite('__item_long__')">
