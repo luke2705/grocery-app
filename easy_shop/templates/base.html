@@ -58,12 +58,14 @@
             {% endif %}     
             </li>
           </ul>
-          <ul class=" navbar-nav ml-auto mt-2 mt-lg-0 d-block d-md-none">
-            <li class="nav-item">
-                <span id='itemcount' class="badge badge-pill badge-light">0</span>
-                <img src="{% static 'shopping-cart.png' %}" style="filter: invert(100%);width:20px;cursor:pointer" alt="not found" onclick="openNav()">
-            </li>
-          </ul>
+          {% if request.resolver_match.url_name != 'order' %}
+            <ul class=" navbar-nav ml-auto mt-2 mt-lg-0 d-block d-md-none">
+              <li class="nav-item">
+                  <span id='itemcount' class="badge badge-pill badge-light">0</span>
+                  <img src="{% static 'shopping-cart.png' %}" style="filter: invert(100%);width:20px;cursor:pointer" alt="not found" onclick="openNav()">
+              </li>
+            </ul>
+          {% endif %}
         </div>
       </nav>
     </div>
