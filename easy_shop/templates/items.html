@@ -19,11 +19,11 @@
                         <div class="form-row">
                             <div class="form-group col-6">
                                 <label for="">Item Name</label>
-                                <input type="text" id="new-item" class="form-control" placeholder="Enter New Item Name..." aria-describedby="helpId">    
+                                <input type="text" id="new-item" class="form-control" placeholder="Enter New Item Name..." aria-describedby="helpId" style="background-color: transparent;">    
                             </div>
                             <div class="form-group col-6">
                                 <label for="inputState">Location</label>
-                                <select id="inputState" class="form-control">
+                                <select id="inputState" class="form-control" style="background-color: transparent;">
                                     <option selected>Choose...</option>
                                     {% for location in Locations %}                
                                         <option selected>{{location}} </option>
@@ -310,24 +310,26 @@
         $('.incart').removeClass('incart')
         $('.add').each(function(){this.textContent='Add'})
     }
-    function openNav() {
-        document.getElementById("mySidenav").style.right = "0px";
-        document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
-        $(".meal img, .meal .btn").each(function() {
-            $(this).css("opacity", "0.4");
-            $(this).attr('disabled','');
-        });
-        $('.fixed-top').each(function(){$(this).css("background-color","#e98f81")})
-    }        
-    function closeNav() {
-        document.getElementById("mySidenav").style.right = "-250px";
-        document.body.style.backgroundColor = "white";
-        $(".meal img, .meal .btn").each(function() {
-            $(this).css("opacity", "1");
-            $(this).removeAttr('disabled','');
-        });
-        $('.fixed-top').each(function(){$(this).css("background-color","#ed3418")})
-    }
+    // function openNav() {
+    //     document.getElementById("mySidenav").style.right = "0px";
+    //     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    //     // had to change .meal to #meals for items page
+    //     $(".meal img, #meals .btn").each(function() {
+    //         $(this).css("opacity", "0.4");
+    //         $(this).attr('disabled','');
+    //     });
+    //     $('.fixed-top').each(function(){$(this).css("background-color","#e98f81")})
+    // }        
+    // function closeNav() {
+    //     document.getElementById("mySidenav").style.right = "-250px";
+    //     document.body.style.backgroundColor = "white";
+    //     // had to change .meal to #meals for items page
+    //     $(".meal img, #meals .btn").each(function() {
+    //         $(this).css("opacity", "1");
+    //         $(this).removeAttr('disabled','');
+    //     });
+    //     $('.fixed-top').each(function(){$(this).css("background-color","#ed3418")})
+    // }
     $('#meals').on('click',function(){
         if (document.getElementById("mySidenav").style.right == "0px"){
             closeNav();    

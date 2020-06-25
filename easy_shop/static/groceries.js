@@ -43,6 +43,30 @@ function titleCase(str) {
     );
 }
 
+$(document).ready(function(){
+    console.log('{{Ingredients}}')
+})
+
+function openNav() {
+    document.getElementById("mySidenav").style.right = "0px";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    // had to change .meal to #meals for items page
+    $(".meal img, #meals .btn, .meal .btn").each(function() {
+        $(this).css("opacity", "0.4");
+        $(this).attr('disabled','');
+    });
+    $('.fixed-top').each(function(){$(this).css("background-color","#d8767f")})
+}        
+function closeNav() {
+    document.getElementById("mySidenav").style.right = "-250px";
+    document.body.style.backgroundColor = "white";
+    // had to change .meal to #meals for items page
+    $(".meal img, #meals .btn, .meal .btn").each(function() {
+        $(this).css("opacity", "1");
+        $(this).removeAttr('disabled','');
+    });
+    $('.fixed-top').each(function(){$(this).css("background-color","#dc3545")})
+}
 
 // console.log('{{recipes}}')
 // // couldn't figure out how to cleanly parse python dictionary sent from django

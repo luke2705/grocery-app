@@ -69,111 +69,113 @@
     
     var cartDict = (getCookie('cartDict'));
     var selectedMeals = (getCookie('selectedMeals'));
-    var favorites = (getCookie('favorites'))['favorites'];
-    if (favorites==undefined){favorites=[];}
+    // var favorites = (getCookie('favorites'))['favorites'];
+    // if (favorites==undefined){favorites=[];}
     updateCart();
     updateSelectedMeals();
-    updateBrowse(alacarteItems)
-    initFavorites();
 
-    function updateBrowse(alacarteItems){
-        $('#browse-items')[0].innerHTML=""
-        alacarteItems.sort(caseInsensitiveSort)
-        alacarteItems.forEach(item=>{
-            item_html = `<span id='__item__' class='ingredient'>
-                             <span onclick="addItemToCart(this)" style="display: inline-block;padding-left:5px">__item_long__</span>
-                             <div id='__item__-favorite' class="favorite" onclick="toggleFavorite('__item_long__')">
-                                 <span id="__item__-fa" class="fa fa-star-o" style="display: inline-block;"></span>
-                             </div>
-                         </span>`
-            item_html = item_html.replace(/__item__/g, item.replace(/\s/g, ""))
-            item_html = item_html.replace(/__item_long__/g, item)
-            $('#browse-items').append(item_html)
-        })
-    }
     
-    $('#add-item').on('submit', function(event){
-        event.preventDefault();
-        item = titleCase(event.target.elements[0].value)
-        item_location = event.target.elements[1].value
-        data = {'item':item, 'location':item_location};
-        $.ajax({
-            url : "/items/",
-            type : "POST",
-            data : JSON.stringify(data), 
+    // updateBrowse(alacarteItems)
+    // initFavorites();
 
-            success : function(json) {
-                // clear out any content from previous game
-                alacarteItems.push(item)
-                updateBrowse(alacarteItems)
-                $('#'+item.replace(/\s/g,"")).addClass('item-highlight')
-                $('#new-item')[0].value=''
-            },
+    // function updateBrowse(alacarteItems){
+    //     $('#browse-items')[0].innerHTML=""
+    //     alacarteItems.sort(caseInsensitiveSort)
+    //     alacarteItems.forEach(item=>{
+    //         item_html = `<span id='__item__' class='ingredient'>
+    //                          <span onclick="addItemToCart(this)" style="display: inline-block;padding-left:5px">__item_long__</span>
+    //                          <div id='__item__-favorite' class="favorite" onclick="toggleFavorite('__item_long__')">
+    //                              <span id="__item__-fa" class="fa fa-star-o" style="display: inline-block;"></span>
+    //                          </div>
+    //                      </span>`
+    //         item_html = item_html.replace(/__item__/g, item.replace(/\s/g, ""))
+    //         item_html = item_html.replace(/__item_long__/g, item)
+    //         $('#browse-items').append(item_html)
+    //     })
+    // }
+    
+    // $('#add-item').on('submit', function(event){
+    //     event.preventDefault();
+    //     item = titleCase(event.target.elements[0].value)
+    //     item_location = event.target.elements[1].value
+    //     data = {'item':item, 'location':item_location};
+    //     $.ajax({
+    //         url : "/items/",
+    //         type : "POST",
+    //         data : JSON.stringify(data), 
 
-            error : function(xhr,errmsg,err) {
-                console.log(xhr.status + ": " + xhr.responseText);
-                alert('must be logged in to add ingredients')
-            }
-        });       
-    });    
+    //         success : function(json) {
+    //             // clear out any content from previous game
+    //             alacarteItems.push(item)
+    //             updateBrowse(alacarteItems)
+    //             $('#'+item.replace(/\s/g,"")).addClass('item-highlight')
+    //             $('#new-item')[0].value=''
+    //         },
 
-    function initFavorites(){        
-        html = ""
-        if (favorites.length==0){
-            $('#favorites-list')[0].innerHTML = "<h4>Uh oh! You dont have any favorites yet!</h4>"
-        }
-        else{
-            favorites.sort();
-            favorites.forEach(element => {
-                html+='<span id=&#39;'+ element +'&#39; class=ingredient onclick="addItemToCart(this)" style="padding:0 5px 0 5px">'+element+'</span>'
-                favorite = element.replace(/\s/g,"");
-                $('#'+favorite+'-favorite').toggleClass('active')
-                $('#'+favorite+'-fa').toggleClass(['fa-star','fa-star-o'])
-            });
-            $('#favorites-list')[0].innerHTML = html
-        }
-    }
-    function updateFavorites(){        
-        html = ""
-        if (favorites.length==0){
-            $('#favorites-list')[0].innerHTML = "<h4>Uh oh! You dont have any favorites yet!</h4>"
-            return
-        }
-        favorites.sort();
-        for (var favorite in favorites){
-            html+='<span id=&#39;'+ favorites[favorite] +'&#39; class=ingredient onclick="addItemToCart(this)" style="padding:0 5px 0 5px">'+favorites[favorite]+'</span>'
-        }
-        $('#favorites-list')[0].innerHTML = html
-    }
-    function toggleFavorite(ingredient){
-        // a lot of the code below has been stripped with the removal of the ring animation
-        //change the id to remove spaces from ingredients
-        short_ingredient = ingredient.replace(/\s/g, "");
-        // remove the favorite
-        if ($('#'+short_ingredient+'-fa').hasClass("fa-star")) {
-                $('#'+short_ingredient+'-favorite').removeClass('active')
-                $('#'+short_ingredient+'-fa').removeClass('fa-star')
-                $('#'+short_ingredient+'-fa').addClass('fa-star-o')
-            index = favorites.indexOf(ingredient);
-            favorites.splice(index,1);
-        } else {
-            // add the favorite
-            $('#'+short_ingredient+'-favorite').addClass('active')
-            $('#'+short_ingredient+'-favorite').addClass('active-2')
-                $('#'+short_ingredient+'-fa').addClass('fa-star')
-                $('#'+short_ingredient+'-fa').removeClass('fa-star-o')
-            setTimeout(function() {
-                $('#'+short_ingredient+'-favorite').addClass('active-3')
-            }, 150)
-            setTimeout(function() { 
-                $('#'+short_ingredient+'-favorite').removeClass('active-2');
-                $('#'+short_ingredient+'-favorite').removeClass('active-3');
-            }, 150)
-            favorites.push(ingredient)
-        }
-        document.cookie = 'favorites={"favorites":'+JSON.stringify(favorites)+'}';
-        updateFavorites();
-    }
+    //         error : function(xhr,errmsg,err) {
+    //             console.log(xhr.status + ": " + xhr.responseText);
+    //             alert('must be logged in to add ingredients')
+    //         }
+    //     });       
+    // });    
+
+    // function initFavorites(){        
+    //     html = ""
+    //     if (favorites.length==0){
+    //         $('#favorites-list')[0].innerHTML = "<h4>Uh oh! You dont have any favorites yet!</h4>"
+    //     }
+    //     else{
+    //         favorites.sort();
+    //         favorites.forEach(element => {
+    //             html+='<span id=&#39;'+ element +'&#39; class=ingredient onclick="addItemToCart(this)" style="padding:0 5px 0 5px">'+element+'</span>'
+    //             favorite = element.replace(/\s/g,"");
+    //             $('#'+favorite+'-favorite').toggleClass('active')
+    //             $('#'+favorite+'-fa').toggleClass(['fa-star','fa-star-o'])
+    //         });
+    //         $('#favorites-list')[0].innerHTML = html
+    //     }
+    // }
+    // function updateFavorites(){        
+    //     html = ""
+    //     if (favorites.length==0){
+    //         $('#favorites-list')[0].innerHTML = "<h4>Uh oh! You dont have any favorites yet!</h4>"
+    //         return
+    //     }
+    //     favorites.sort();
+    //     for (var favorite in favorites){
+    //         html+='<span id=&#39;'+ favorites[favorite] +'&#39; class=ingredient onclick="addItemToCart(this)" style="padding:0 5px 0 5px">'+favorites[favorite]+'</span>'
+    //     }
+    //     $('#favorites-list')[0].innerHTML = html
+    // }
+    // function toggleFavorite(ingredient){
+    //     // a lot of the code below has been stripped with the removal of the ring animation
+    //     //change the id to remove spaces from ingredients
+    //     short_ingredient = ingredient.replace(/\s/g, "");
+    //     // remove the favorite
+    //     if ($('#'+short_ingredient+'-fa').hasClass("fa-star")) {
+    //             $('#'+short_ingredient+'-favorite').removeClass('active')
+    //             $('#'+short_ingredient+'-fa').removeClass('fa-star')
+    //             $('#'+short_ingredient+'-fa').addClass('fa-star-o')
+    //         index = favorites.indexOf(ingredient);
+    //         favorites.splice(index,1);
+    //     } else {
+    //         // add the favorite
+    //         $('#'+short_ingredient+'-favorite').addClass('active')
+    //         $('#'+short_ingredient+'-favorite').addClass('active-2')
+    //             $('#'+short_ingredient+'-fa').addClass('fa-star')
+    //             $('#'+short_ingredient+'-fa').removeClass('fa-star-o')
+    //         setTimeout(function() {
+    //             $('#'+short_ingredient+'-favorite').addClass('active-3')
+    //         }, 150)
+    //         setTimeout(function() { 
+    //             $('#'+short_ingredient+'-favorite').removeClass('active-2');
+    //             $('#'+short_ingredient+'-favorite').removeClass('active-3');
+    //         }, 150)
+    //         favorites.push(ingredient)
+    //     }
+    //     document.cookie = 'favorites={"favorites":'+JSON.stringify(favorites)+'}';
+    //     updateFavorites();
+    // }
     function updateSelectedMeals(){
         for (var meal in selectedMeals){
             mealDiv = $("div[id='" + meal + "']")
@@ -304,29 +306,28 @@
         $('.incart').removeClass('incart')
         $('.add').each(function(){this.textContent='Add'})
     }
-    function openNav() {
-        document.getElementById("mySidenav").style.right = "0px";
-        document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
-        $(".meal img, .meal .btn").each(function() {
-            $(this).css("opacity", "0.4");
-            $(this).attr('disabled','');
-        });
-        $('.fixed-top').each(function(){$(this).css("background-color","#e98f81")})
-    }        
-    function closeNav() {
-        document.getElementById("mySidenav").style.right = "-250px";
-        document.body.style.backgroundColor = "white";
-        $(".meal img, .meal .btn").each(function() {
-            $(this).css("opacity", "1");
-            $(this).removeAttr('disabled','');
-        });
-        $('.fixed-top').each(function(){$(this).css("background-color","#ed3418")})
-    }
+    // function openNav() {
+    //     document.getElementById("mySidenav").style.right = "0px";
+    //     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    //     $(".meal img, .meal .btn").each(function() {
+    //         $(this).css("opacity", "0.4");
+    //         $(this).attr('disabled','');
+    //     });
+    //     $('.fixed-top').each(function(){$(this).css("background-color","#e98f81")})
+    // }        
+    // function closeNav() {
+    //     document.getElementById("mySidenav").style.right = "-250px";
+    //     document.body.style.backgroundColor = "white";
+    //     $(".meal img, .meal .btn").each(function() {
+    //         $(this).css("opacity", "1");
+    //         $(this).removeAttr('disabled','');
+    //     });
+    //     $('.fixed-top').each(function(){$(this).css("background-color","#ed3418")})
+    // }
     $('#meals').on('click',function(){
         if (document.getElementById("mySidenav").style.right == "0px"){
             closeNav();    
         }
-        
         });
 </script>
 {% endblock %}
